@@ -1,6 +1,6 @@
 import FYResMgr from "../Tools/FYResMgr";
 import FYEffectItem from "../Tools/FYEffectItem";
-import FYScheduleCtl from "../Tools/FYScheduleCtl";
+import FYScheduleMgr from "./FYScheduleMgr";
 
 const { ccclass, property } = cc._decorator;
 /**
@@ -37,9 +37,9 @@ export default class FYEffectMgr {
     public playEffect(effectName: string, v2Pos: cc.Vec2, duration: number, parent = this._effectContainer) {
         let node = this.add(effectName, v2Pos);
         node.parent = parent;
-        FYScheduleCtl.Instance.setScheduleOnce(function () {
+        FYScheduleMgr.Instance.scheduleOnce(function () {
             FYEffectMgr.Instance.remove(node);
-        }, duration);
+        }, node, duration);
         return node;
     }
 
