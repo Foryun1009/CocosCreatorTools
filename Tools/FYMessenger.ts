@@ -1,0 +1,115 @@
+/** 消息管理器 */
+export default class FYMessenger {
+    /** 单例 */
+    public static readonly Instance: FYMessenger = new FYMessenger();
+
+    private constructor() {
+
+    }
+
+    private listeners = {};
+    private _cbMsg = 0;
+
+    /**
+     * 添加事件
+     * @param msgType 消息类型
+     * @param callback 回调函数
+     * @param context 上下午
+     */
+    public add(msgType: string, callback: any, context: any) {
+        let observers: Observer[] = this.listeners[msgType];
+        if (!observers) {
+            this.listeners[msgType] = [];
+        }
+        // this.listeners[msgType].push(new Observer(callback, context)); 
+
+        // this.listeners[msgType][context.__instanceId] = new Observer(callback, context);
+
+        callback.cbMsg = this._cbMsg;
+        this._cbMsg++;
+        this.listeners[msgType][callback.cbMsg] = new Observer(callback, context);
+    }
+
+    /**  
+     * 移除事件  
+     * @param msgType 事件名称  
+     * @param callback 回调函数  
+     * @param context 上下文  
+     */
+    public remove(msgType: string, callback: any, context: any) {
+        let observers: Observer[] = this.listeners[msgType];
+        if (!observers) return;
+        let length = observers.length;
+        // for (let i = 0; i < length; i++) {  
+        //     let observer = observers[i];  
+        //     if (observer.compar(context)) {  
+        //         observers.splice(i, 1);  
+        //         break;  
+        //     }  
+        // }  
+
+        // delete observers[context.__instanceId]
+        // if (observers.length == 0) {
+        //     delete this.listeners[msgType];
+        // }
+
+        delete observers[callback.cbMsg];
+        if (observers.length == 0) {
+            delete this.listeners[msgType];
+        }
+    }
+
+    /**  
+     * 发送事件  
+     * @param msgType 事件名称  
+     * @param args 参数
+     */
+    public send(msgType: string, ...args: any[]) {
+        let observers: Observer[] = this.listeners[msgType];
+        if (!observers) return;
+        let length = observers.length;
+        // for (let i = 0; i < length; i++) {  
+        //     let observer = observers[i];  
+        //     observer.notify(msgType, ...args);  
+        // }  
+
+        for (let key in observers) {
+            let observer = observers[key];
+            observer.notify(msgType, ...args);
+        }
+    }
+
+}
+
+/**  
+ * 观察者  
+ */
+class Observer {
+    /** 回调函数 */
+    private callback: Function = null;
+    /** 上下文 */
+    private context: any = null;
+
+    constructor(callback: Function, context: any) {
+        let self = this;
+        self.callback = callback;
+        self.context = context;
+    }
+
+    /**  
+     * 发送通知  
+     * @param args 不定参数  
+     */
+    notify(...args: any[]): void {
+        let self = this;
+        self.callback.call(self.context, ...args);
+    }
+
+    /**  
+     * 上下文比较  
+     * @param context 上下文  
+     */
+    compar(context: any): boolean {
+        return context == this.context;
+    }
+}  
