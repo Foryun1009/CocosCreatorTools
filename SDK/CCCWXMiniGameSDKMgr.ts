@@ -1,5 +1,5 @@
-import FYSDKMgr from "./FYSDKMgr";
-import FYUtility from "./FYUtility";
+import FYSDKMgr from "../Tools/FYSDKMgr";
+import FYUtility from "../Tools/FYUtility";
 
 export enum ShareResultType {
     /** 分享失败 */

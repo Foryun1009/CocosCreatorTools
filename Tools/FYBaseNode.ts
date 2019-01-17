@@ -20,7 +20,7 @@ export default class FYBaseNode extends cc.Component {
      */
     public getInTargetSpacePos(target: cc.Node) {
         if (target instanceof cc.Node) {
-            return this.node.parent.convertToNodeSpaceAR(this.getWorldPosition());
+            return target.parent.convertToNodeSpaceAR(this.getWorldPosition());
         }
 
         FYLog.error("target is null");

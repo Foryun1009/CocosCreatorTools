@@ -23,6 +23,12 @@ export default class FYResMgr {
     public static readonly MsgPreLoadSequenceFrameComplete = "MsgPreLoadSequenceFrameComplete";
     /** 加载其他资源完毕 */
     public static readonly MsgPreLoadOtherComplete = "MsgPreLoadOtherComplete";
+
+    /** 加载音乐完成 */
+    public static readonly MsgPreLoadMusicComplete = "MsgPreLoadMusicComplete";
+    /** 加载音效完成 */
+    public static readonly MsgPreLoadSoundComplete = "MsgPreLoadSoundComplete";
+
     /** 加载资源完毕 */
     public static readonly MsgPreLoadComplete = "PreLoadComplete";
 
@@ -34,6 +40,10 @@ export default class FYResMgr {
     public dictSequenceFrame = {};
     /** 其他资源字典 */
     public dictOther = {};
+    /** 音效资源字典 */
+    public dictSound = {};
+    /** 音乐资源字典 */
+    public dictMusic = {};
 
     /**
      * 预加载图集
@@ -50,7 +60,7 @@ export default class FYResMgr {
                     }
 
                 }
-
+                console.log("---> MsgPreLoadAtlasComplete");
                 FYMessenger.Instance.send(FYResMgr.MsgPreLoadAtlasComplete);
             });
     }
@@ -67,6 +77,7 @@ export default class FYResMgr {
                 for (let i = 0; i < assets.length; i++) {
                     self.dictEffect[assets[i]._name] = assets[i].data;
                 }
+                console.log("---> MsgPreLoadEffectComplete");
                 FYMessenger.Instance.send(FYResMgr.MsgPreLoadEffectComplete);
             });
     }
@@ -83,6 +94,7 @@ export default class FYResMgr {
                 for (let i = 0; i < assets.length; i++) {
                     self.dictSequenceFrame[assets[i]._name] = assets[i].data;
                 }
+                console.log("---> MsgPreLoadSequenceFrameComplete");
                 FYMessenger.Instance.send(FYResMgr.MsgPreLoadSequenceFrameComplete);
             });
     }
@@ -99,7 +111,34 @@ export default class FYResMgr {
                 for (let i = 0; i < assets.length; i++) {
                     self.dictOther[assets[i]._name] = assets[i].data;
                 }
+                console.log("---> MsgPreLoadOtherComplete");
                 FYMessenger.Instance.send(FYResMgr.MsgPreLoadOtherComplete);
+            });
+    }
+
+    public preLoadMusic() {
+        let self = this;
+        cc.loader.loadResDir("audio/music", cc.AudioClip, function (completedCount, totalCount, item) {
+        },
+            function (err, assets) {
+                for (let i = 0; i < assets.length; i++) {
+                    self.dictMusic[assets[i]._name] = assets[i];
+                }
+                console.log("---> MsgPreLoadMusicComplete");
+                FYMessenger.Instance.send(FYResMgr.MsgPreLoadMusicComplete);
+            });
+    }
+
+    public preLoadSound() {
+        let self = this;
+        cc.loader.loadResDir("audio/sound", cc.AudioClip, function (completedCount, totalCount, item) {
+        },
+            function (err, assets) {
+                for (let i = 0; i < assets.length; i++) {
+                    self.dictSound[assets[i]._name] = assets[i];
+                }
+                console.log("---> MsgPreLoadSoundComplete");
+                FYMessenger.Instance.send(FYResMgr.MsgPreLoadSoundComplete);
             });
     }
 
@@ -140,7 +179,7 @@ export default class FYResMgr {
      * 加载其他资源
      * @param otherName 其他资源名字
      */
-    public loadOther(otherName: string): cc.Node {
+    public loadOther(otherName: string) {
         if (otherName in this.dictOther) {
             return this.dictOther[otherName];
         }
